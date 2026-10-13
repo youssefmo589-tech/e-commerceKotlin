@@ -159,12 +159,37 @@ private fun OfferPager() {
         modifier = Modifier.fillMaxWidth().height(190.dp),
         contentPadding = PaddingValues(horizontal = 18.dp)
     ) {
-        Image(
-            painter = painterResource(R.drawable.headphone_ad),
-            contentDescription = "Headphones advertisement",
-            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(18.dp)),
-            contentScale = ContentScale.Crop
-        )
+        Box(Modifier.fillMaxSize().clip(RoundedCornerShape(18.dp))) {
+            Image(
+                painter = painterResource(R.drawable.headphone_ad),
+                contentDescription = "Headphones advertisement",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            Column(
+                modifier = Modifier.align(Alignment.CenterStart).padding(start = 16.dp, top = 12.dp, bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text("UP TO", color = Color(0xFF171717), fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                Text("25% OFF", color = Color(0xFF171717), fontSize = 23.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "For all Headphones\n& AirPods",
+                    color = Color(0xFF171717),
+                    fontSize = 12.sp,
+                    lineHeight = 15.sp
+                )
+                Button(
+                    onClick = { },
+                    modifier = Modifier.padding(top = 4.dp).height(34.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = RouteBlue)
+                ) {
+                    Text("Shop Now", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
+        }
     }
 }
 
