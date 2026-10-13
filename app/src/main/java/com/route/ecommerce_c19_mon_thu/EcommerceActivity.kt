@@ -10,15 +10,17 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -43,8 +45,6 @@ import com.route.ecommerce_c19_mon_thu.ui.theme.EcommerceTheme
 private val RouteBlue = Color(0xFF004182)
 private val TextGray = Color(0xFF7F7F7F)
 private val ScreenGray = Color(0xFFF6F7F9)
-private val OfferYellow = Color(0xFFFEDA00)
-
 private val categoryNames = listOf(
     "Women’s fashion", "men’s fashion", "Laptops & Electronics", "Baby & Toys",
     "Beauty", "Headphones", "Skincare", "Camera"
@@ -99,9 +99,9 @@ private fun HomeScreen(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize().background(Color.White).verticalScroll(rememberScrollState())
     ) {
         HomeHeader()
-        OfferBanner()
+        OfferPager()
         SectionHeader(title = "Categories", action = "view all")
-        CategoryGrid()
+        CategoryRow()
         SectionHeader(title = "Home Appliance", action = "view all")
         HomeApplianceRow()
         Spacer(Modifier.height(20.dp))
@@ -118,43 +118,48 @@ private fun HomeHeader() {
                 modifier = Modifier.width(88.dp).height(38.dp),
                 contentScale = ContentScale.Fit
             )
-            Spacer(Modifier.weight(1f))
-            Text("🛒", fontSize = 23.sp)
         }
         Spacer(Modifier.height(14.dp))
         Row(
-            modifier = Modifier.fillMaxWidth().height(48.dp)
-                .clip(RoundedCornerShape(14.dp)).background(ScreenGray).padding(horizontal = 14.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("⌕", color = TextGray, fontSize = 25.sp)
-            Spacer(Modifier.width(8.dp))
-            Text("What are you looking for?", color = TextGray, fontSize = 14.sp)
+            var searchText by remember { mutableStateOf("") }
+            OutlinedTextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                modifier = Modifier.weight(1f).height(56.dp),
+                placeholder = { Text("What are you looking for?", color = TextGray, fontSize = 13.sp) },
+                leadingIcon = { Text("⌕", color = RouteBlue, fontSize = 22.sp) },
+                singleLine = true,
+                shape = CircleShape,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = RouteBlue,
+                    unfocusedBorderColor = RouteBlue,
+                    cursorColor = RouteBlue
+                )
+            )
+            Spacer(Modifier.width(12.dp))
+            Box(
+                Modifier.size(48.dp).clip(CircleShape).background(ScreenGray),
+                contentAlignment = Alignment.Center
+            ) { Text("🛒", fontSize = 22.sp) }
         }
     }
 }
 
 @Composable
-private fun OfferBanner() {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 5.dp)
-            .height(154.dp).clip(RoundedCornerShape(18.dp)).background(OfferYellow).padding(15.dp),
-        verticalAlignment = Alignment.CenterVertically
+private fun OfferPager() {
+    val pagerState = rememberPagerState(pageCount = { 1 })
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.fillMaxWidth().height(190.dp),
+        contentPadding = PaddingValues(horizontal = 18.dp)
     ) {
-        Column(Modifier.weight(1f)) {
-            Text("UP TO", color = RouteBlue, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Text("25% OFF", color = RouteBlue, fontWeight = FontWeight.ExtraBold, fontSize = 27.sp)
-            Spacer(Modifier.height(9.dp))
-            Text(
-                "Shop Now", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold,
-                modifier = Modifier.clip(RoundedCornerShape(18.dp)).background(RouteBlue)
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
-            )
-        }
         Image(
             painter = painterResource(R.drawable.headphone_ad),
-            contentDescription = "Headphones offer",
-            modifier = Modifier.fillMaxHeight().weight(1f).clip(RoundedCornerShape(12.dp)),
+            contentDescription = "Headphones advertisement",
+            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(18.dp)),
             contentScale = ContentScale.Crop
         )
     }
@@ -163,7 +168,7 @@ private fun OfferBanner() {
 @Composable
 private fun SectionHeader(title: String, action: String) {
     Row(
-        Modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, top = 20.dp, bottom = 12.dp),
+        Modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, top = 12.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(title, Modifier.weight(1f), color = RouteBlue, fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -172,13 +177,11 @@ private fun SectionHeader(title: String, action: String) {
 }
 
 @Composable
-private fun CategoryGrid() {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(4),
-        modifier = Modifier.fillMaxWidth().height(270.dp).padding(horizontal = 12.dp),
-        userScrollEnabled = false,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+private fun CategoryRow() {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth().height(112.dp),
+        contentPadding = PaddingValues(horizontal = 14.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(categoryNames) { category -> CategoryItem(category) }
     }
@@ -187,7 +190,7 @@ private fun CategoryGrid() {
 @Composable
 private fun CategoryItem(name: String) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 2.dp),
+        modifier = Modifier.width(78.dp).padding(vertical = 3.dp, horizontal = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
