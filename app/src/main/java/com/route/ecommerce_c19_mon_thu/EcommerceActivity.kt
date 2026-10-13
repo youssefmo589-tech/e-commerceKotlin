@@ -11,6 +11,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -178,10 +181,12 @@ private fun SectionHeader(title: String, action: String) {
 
 @Composable
 private fun CategoryRow() {
-    LazyRow(
-        modifier = Modifier.fillMaxWidth().height(112.dp),
-        contentPadding = PaddingValues(horizontal = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        modifier = Modifier.fillMaxWidth().height(188.dp),
+        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(categoryNames) { category -> CategoryItem(category) }
     }
